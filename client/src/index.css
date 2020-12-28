@@ -1,0 +1,11 @@
+#root {
+  display: grid;
+}
+
+.App {
+  display: grid;
+  width: 50vw;
+  gap: 20px;
+  /* align-self: center; */
+  justify-self: center;
+}
