@@ -8,7 +8,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 type TaskGroupType = {
   day: string
   tasks: TaskType[]
-  changeTaskStatus: (taskId: string, status: boolean) => void
+  changeTaskStatus: (todoId: string, status: boolean) => void
 }
 
 const TaskGroup: React.FC<TaskGroupType> = ({ day, tasks, changeTaskStatus }) => {
@@ -31,7 +31,7 @@ const TaskGroup: React.FC<TaskGroupType> = ({ day, tasks, changeTaskStatus }) =>
       <TasksWrapper>
         {
           !isTasksClose && (
-            tasks.map(task => <Task changeStatus={(status: boolean) => changeTaskStatus(task.id, status)} task={task} />)
+            tasks.map(task => <Task changeStatus={(status: boolean) => changeTaskStatus(task._id, status)} task={task} />)
           )
         }
       </TasksWrapper>

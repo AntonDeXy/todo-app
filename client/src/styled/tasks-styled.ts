@@ -4,6 +4,7 @@ export const TasksHeaderStyled = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
+  color: black;
   .left-block {
     display: grid;
     grid-template-columns: auto;

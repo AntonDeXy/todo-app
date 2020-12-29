@@ -1,82 +1,66 @@
+import axios from "axios"
 import { TaskType } from "../types"
 
-const testTasks: TaskType[] = [
-  {
-    id: '1',
-    content: 'task',
-    creator: 'user',
-    isCompleted: true,
-    date: new Date(2020, 11, 10)
-  }, //past completed
-  {
-    id: '2',
-    content: 'task',
-    creator: 'user',
-    isCompleted: false,
-    date: new Date(2020, 11, 10)
-  }, //past !completed
-  {
-    id: '3',
-    content: 'task',
-    creator: 'user',
-    isCompleted: true,
-    date: new Date()
-  }, // today completed
-  {
-    id: '4',
-    content: 'task',
-    creator: 'user',
-    isCompleted: false,
-    date: new Date()
-  }, // today !completed
-  {
-    id: '5',
-    content: 'task',
-    creator: 'user',
-    isCompleted: false,
-    date: new Date(2020, 11, 14)
-  }, // tomorrow
-  {
-    id: '6',
-    content: 'task',
-    creator: 'user',
-    isCompleted: false,
-    date: new Date(2020, 11, 15)
-  }, // in 3
-  {
-    id: '7',
-    content: 'task',
-    creator: 'user',
-    isCompleted: false,
-    date: new Date(2021, 0, 10)
-  }, // soon
-]
+const baseUrl = 'http://localhost:5000/'
+
+const getAuthHeader = (token: string) => {
+  return {headers: {'Authorization': `Bearer ${token}`}}
+}
 
 const api = {
-  getTasks(
-    success: (tasks: TaskType[]) => void,
-    userId?: string
-  ) {
-    const data = [...testTasks]
-    success(data)
+  async logIn(username: string, password: string, cb: () => void) {
+    const {data} = await axios.post(`${baseUrl}signIn`, {username, password})
+    cb()
+    return data
   },
-  createTask(
+
+  async register (username: string, password: string, cb: (isRegisteredSuccess: boolean) => void) {
+    const {data} = await axios.post(`${baseUrl}signUp`, {username, password})
+    cb(data.success)
+    return data
+  },
+
+  async logOut (refreshToken: string, success: () => void) {
+    const {data} = await axios.delete(`${baseUrl}logout`, {data: {refreshToken: refreshToken}})
+    success()
+    return data
+  },
+
+  async getTasks(
+    token: string,
+    success: (tasks: TaskType[]) => void
+  ) {
+    const {data} = await axios.get(`${baseUrl}todo/get`, getAuthHeader(token))
+    success(data.items)
+  },
+
+  async createTask(
+    token: string,
     taskDate: Date,
     taskContent: string,
-    userId: string,
-    success: () => void
+    success: (res: any) => void
   ) {
     const newTask = {
-      id: ((Math.random() * 12).toFixed()).toString(),
-      isCompleted: false,
-      creator: userId,
-      content: taskContent,
+      todoContent: taskContent,
       date: taskDate,
     }
 
-    testTasks.push(newTask)
+    const {data} = await axios.post(`${baseUrl}todo/create`, {...newTask}, getAuthHeader(token))
 
-    success()
+    success(data)
+  },
+
+  async changeStatus(
+    token: string,
+    todoId: string,
+    newStatus: boolean,
+    success: () => void
+  ) {
+    const {data} = await axios.put(`${baseUrl}todo/change-status/${todoId}`, {newStatus}, getAuthHeader(token))
+
+    if (data.success) {
+      success()
+    }
   }
 }
 

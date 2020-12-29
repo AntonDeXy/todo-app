@@ -1,5 +1,5 @@
 export type TaskType = {
-  id: string
+  _id: string
   content: string
   creator: string
   isCompleted: boolean
