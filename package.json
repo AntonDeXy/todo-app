@@ -1,0 +1,20 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-project": "cd server && npm i & cd client && npm i && npm run build",
+    "start": "cd /server && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AntonDeXy/todo-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AntonDeXy/todo-app/issues"
+  },
+  "homepage": "https://github.com/AntonDeXy/todo-app#readme"
+}
