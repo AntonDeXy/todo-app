@@ -3,6 +3,8 @@ const express = require('express')
 const app = express()
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const morgan = require('morgan')
+const cors = require('cors')
 
 const authController = require('./controllers/auth-controller')
 const authenticateToken = authController.authenticateToken 
@@ -12,7 +14,10 @@ const todosController = require('./controllers/todos-controller')
 const dbName = 'test'
 const MONGO_URI = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.smobz.mongodb.net/${dbName}?retryWrites=true&w=majority`
 
-app.use(express.json())
+// app.use(express.bodyParser({limit: '50mb'}))
+app.use(express.json({limit: '50mb'}))
+app.use(morgan('tiny'))
+app.use(cors('*'))
 
 // todos
 app.get('/todo/get', authenticateToken, todosController.getTodosByUsername)

@@ -46,16 +46,18 @@ exports.login = async (req, res) => {
   const user = await userModel.findOne({username: req.body.username})
 
   if (!user) {
-    return res.status(400).send({success: false, msg: 'User with this username not found'})
+    return res.send({success: false, msg: 'User with this username not found'})
   }
 
   const isPasswordRight = await bcrypt.compare(password, user.password)
 
+  const date = new Date()
+
   if (isPasswordRight) {
-    const accessToken = generateAccessToken(user._doc)
-    const refreshToken = await generateRefreshToken(user._doc)
+    const accessToken = generateAccessToken(user._doc, date)
+    const refreshToken = await generateRefreshToken(user._doc, date)
     
-    return res.json({accessToken, refreshToken})
+    return res.json({success: true, accessToken, refreshToken, user: {username: user.username}})
   } else {
     return res.status(200).send({success: false, msg: 'Password is not valid'})
   }
@@ -65,13 +67,13 @@ exports.getNewTokenByRefreshToken = async (req, res) => {
   const refreshToken = req.body.refreshToken
   if (!refreshToken) return res.sendStatus(401)
 
-  const isTokenExists = refreshTokenModel.findOne({refreshToken})
+  const isTokenExists = await refreshTokenModel.findOne({refreshToken})
   if (!isTokenExists) return res.sendStatus(403)
 
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, data) => {
     if (err) return res.sendStatus(403)
-    const accessToken = generateAccessToken(user)
-    res.json({accessToken})
+    const accessToken = generateAccessToken(data.user, new Date())
+    res.json({accessToken, user: data.user})
   })
 }
 
@@ -87,19 +89,19 @@ exports.authenticateToken = (req, res, next) => {
 
   if (!token) return res.sendStatus(401)
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
     if (err) return res.sendStatus(403)
-    req.user = user
+    req.user = data.user
     next()
   })
 }
 
-function generateAccessToken(user) {
-  return jwt.sign(user,process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15m'})
+function generateAccessToken(user, date) {
+  return jwt.sign({user, createdAt: date}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15m'})
 }
 
-async function generateRefreshToken(user) {
-  const refreshToken = jwt.sign(user,process.env.REFRESH_TOKEN_SECRET)
+async function generateRefreshToken(user, date) {
+  const refreshToken = jwt.sign({user, createdAt: date},process.env.REFRESH_TOKEN_SECRET)
   await new refreshTokenModel({refreshToken}).save()
   return refreshToken
 }

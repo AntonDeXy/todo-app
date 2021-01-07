@@ -9,6 +9,7 @@ exports.createTodo = async (req, res) => {
   const newTodo = new todoSchema({
     content: req.body.todoContent,
     creator: req.user._id,
+    img: req.body.img,
     date: new Date(req.body.date)
   })
 
@@ -33,7 +34,7 @@ exports.changeStatus = async (req, res) => {
 
   if (todoForEdit.creator === req.user._id) {
     todoForEdit.isCompleted = req.body.newStatus
-    todoForEdit.save()
+    await todoForEdit.save()
   
     res.status(200).send({success: true, item: todoForEdit._doc})
   } else {

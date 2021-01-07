@@ -13,6 +13,10 @@ const todoSchema = mongoose.Schema({
     default: false,
     type: Boolean
   },
+  img: {
+    required: false,
+    type: String
+  },
   date: {
     required: true,
     type: Date
