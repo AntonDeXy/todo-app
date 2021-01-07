@@ -1,4 +1,5 @@
 require('dotenv').config()
+const PORT = process.env.PORT || 5000
 const express = require('express')
 const app = express()
 const jwt = require('jsonwebtoken')
@@ -45,5 +46,5 @@ mongoose.connect(MONGO_URI, { useUnifiedTopology: true, useNewUrlParser: true },
   if (err)
     throw err
   console.log('DB connected')
-  app.listen(5000, () => console.log('Server started'))
+  app.listen(PORT, () => console.log('Server started'))
 })
