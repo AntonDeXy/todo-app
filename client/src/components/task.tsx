@@ -18,17 +18,23 @@ const CustomCheckbox = withStyles({
 
 type TaskCompType = {
   task: TaskType
+  editTodo: () => void
   changeStatus: (status: boolean) => void 
 }
 
-const Task:React.FC<TaskCompType> = ({task, changeStatus}) => {
+const Task:React.FC<TaskCompType> = ({task, editTodo, changeStatus}) => {
   return (
     <TaskStyled isCompleted={task.isCompleted} >
       <div className='status' >
         <Checkbox checked={task.isCompleted} onClick={() => changeStatus(!task.isCompleted)} />
       </div>
-      <div className="content">
+      <div onClick={editTodo} className="content">
         {task.content}
+        {
+          task.img && (
+            <img src={task.img} alt=""/>
+          )
+        }
       </div>
       <div className="date">
         <Moment format="DD">

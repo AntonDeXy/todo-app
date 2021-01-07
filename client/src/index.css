@@ -1,13 +1,52 @@
+*{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+
 #root {
   display: grid;
+  /* min-height: 100vh; */
+}
+
+@media(max-width: 768px) {
+  .App {
+    width: 90vw;
+  }
+}
+
+@media(min-width: 768px) {
+  .App {
+    width: 50vw;
+  }
 }
 
 .App {
   display: grid;
-  width: 50vw;
   gap: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   justify-self: center;
+}
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  /* max-height: 60vh; */
+  /* overflow-y: auto;
+  align-self: center;
+  justify-self: center; */
+}
+
+.link-styled {
+  text-decoration: none;
+  color: #3f51b5;
+  margin: 0;
+}
+
+.link-styled:hover {
+  text-decoration: underline;
 }
 
 a {

@@ -87,6 +87,12 @@ export const TaskStyled = styled.div<{isCompleted: boolean}>`
     border-right: 1px solid ${props => props.isCompleted ? '#cacaca' : 'gray'};
     display: grid;
     font-size: 1.2em;
+    gap: 10px;
+    img {
+      height: 10em;
+      max-width: 100%;
+      filter: ${props => props.isCompleted ? 'opacity(0.7)' : 'opacity(1)'};
+    }
   }
   .date {
     display: grid;

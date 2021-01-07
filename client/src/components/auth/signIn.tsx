@@ -1,8 +1,10 @@
 import { Button } from '@material-ui/core'
 import TextField from '@material-ui/core/TextField'
-import React, { useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 import { AuthPanelSt } from '../../styled/other-styled'
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
+import Spinner from "react-spinners/BounceLoader"
+import { spinnerStyles } from '../../App'
 
 type SignInType = {
   err: string
@@ -14,7 +16,8 @@ const SignIn: React.FC<SignInType> = ({ err, login }) => {
   const [password, setPassword] = useState('')
   const [isLoading, setLoading] = useState(false)
 
-  const handleLogin = () => {
+  const handleLogin = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     setLoading(true)
     login(username, password, () => {
       setLoading(false)
@@ -22,7 +25,7 @@ const SignIn: React.FC<SignInType> = ({ err, login }) => {
   }
 
   return (
-    <AuthPanelSt>
+    <AuthPanelSt onSubmit={handleLogin}>
       {
         err && (
           <span className='err'>{err}</span>
@@ -50,8 +53,9 @@ const SignIn: React.FC<SignInType> = ({ err, login }) => {
         autoComplete="current-password"
         helperText="More than 8 symbs"
         variant="outlined" />
-      <Button disabled={isLoading} onClick={handleLogin} variant="contained" color="primary">
+      <Button type='submit' disabled={isLoading} variant="contained" color="primary">
         Sign In
+        <Spinner css={spinnerStyles} size={25} color={'white'} loading={isLoading} />
       </Button>
       <Link to='/signUp' >
         <Button disabled={isLoading} variant="outlined" color="primary">

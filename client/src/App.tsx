@@ -15,36 +15,58 @@ import {
 import SignIn from './components/auth/signIn'
 import SignUp from './components/auth/signUp';
 import Header from './components/Header'
+import { css } from "@emotion/core"
+import CurrentToDoModal from './components/modals/current-todo-modal'
+import { useAlert } from 'react-alert'
+
+export const spinnerStyles = css`
+  display: block;
+  margin: 0 auto;
+  border-color: red;
+`
 
 const App = () => {
+  const alert = useAlert()
   const [user, setUser] = useState<{ username?: string }>({})
-  const [accessToken, setAccessToken] = useState<string>()
-  const [refreshToken, setRefreshToken] = useState<string>()
   const [authErr, setAuthErr] = useState<string>('')
   const [tasks, setTasks] = useState<TaskType[]>([])
   const [sortedtasks, setSortedTasks] = useState<SortedTasksType[]>([])
   const [isCreateTaskModalOpen, setCreateTaskModalOpen] = useState<boolean>(false)
-
+  const [currentToDo, setCurrentToDo] = useState<TaskType | undefined>(undefined)
+  
   useEffect(() => {
     setSortedTasks(getSortedTasks(tasks))
   }, [tasks])
 
+  useEffect(() => {
+    if (user && user.username) {
+      api.getTasks(res => setTasks(res))
+    }
+  }, [user])
 
   useEffect(() => {
-    if (accessToken) {
-      api.getTasks(accessToken, res => setTasks(res))
-    }
-  }, [accessToken])
+    checkIfRefreshTokenExists()
+  }, [])
 
-  const addTask = (date: Date, content: string, success: () => void) => {
-    if (accessToken) {
-      api.createTask(accessToken, date, content, (res) => {
-        if (res.success) {
-          api.getTasks(accessToken, res => setTasks(res))
-          success()
-        }
-      })
-    }
+  const addTask = (date: Date, content: string, success: () => void, taskImg?: string) => {
+    api.createTask(date, content, (res) => {
+      if (res.success) {
+        api.getTasks(res => setTasks(res))
+        success()
+      }
+    }, taskImg)
+  }
+
+  const deleteTask = async (todoId: string) => {
+    const res = await api.removeToDo(todoId)
+
+    if (res) {
+      setTasks([...tasks.filter(todo => todo._id !== todoId)])
+      return true
+    } 
+
+    alert.error('Something went wrong, try again later')
+    return false
   }
 
   const openCreateNewTaskModal = () => {
@@ -55,22 +77,29 @@ const App = () => {
     setCreateTaskModalOpen(false)
   }
 
-  const changeTaskStatus = async (todoId: string, status: boolean) => {
-    if (accessToken) {
-      await api.changeStatus(accessToken, todoId, status, () => {
-        api.getTasks(accessToken, res => setTasks(res))
-      })
+  const checkIfRefreshTokenExists = async () => {
+    const res = await api.getNewAccessToken()
+    if (res.success) {
+      setUser(res.user)
     }
+  }
+
+  const changeTaskStatus = async (todoId: string, status: boolean) => {
+    await api.changeStatus(todoId, status, (newItem: TaskType) => {
+      setTasks([...tasks.map(todo => {
+        if (todo._id === newItem._id) {
+          return newItem
+        }
+        return todo
+      })])
+    })
   }
 
   const login = async (username: string, password: string, cb: () => void) => {
     setAuthErr('')
     const res = await api.logIn(username, password, cb)
     if (res.success) {
-      console.log(res)
       setUser(res.user)
-      setAccessToken(res.accessToken)
-      setRefreshToken(res.refreshToken)
     } else {
       setAuthErr(res.msg)
     }
@@ -85,13 +114,9 @@ const App = () => {
   }
 
   const logOut = () => {
-    if (refreshToken) {
-      api.logOut(refreshToken, () => {
-        setAccessToken('')
-        setRefreshToken('')
-        setUser({})
-      })
-    }
+    api.logOut(() => {
+      setUser({})
+    })
   }
 
   return (
@@ -102,7 +127,17 @@ const App = () => {
         )
       }
       <TasksHeader />
-      <CreateNewTaskModal modalStatus={isCreateTaskModalOpen} closeCreateNewTaskModal={closeCreateNewTaskModal} createNewTask={(date, content, success) => addTask(date, content, success)} />
+      {
+        isCreateTaskModalOpen && (
+          <CreateNewTaskModal modalStatus={isCreateTaskModalOpen} closeCreateNewTaskModal={closeCreateNewTaskModal} createNewTask={(date, content, success, taskImg?: string) => addTask(date, content, success, taskImg)} />
+        )
+      }
+
+      {
+        currentToDo && (
+          <CurrentToDoModal deleteTodo={(todoId: string):Promise<boolean> => deleteTask(todoId)} closeModal={() => setCurrentToDo(undefined)} initialTodo={currentToDo} />
+        ) 
+      }
 
       <Switch>
         <Route exact path='/'>
@@ -110,6 +145,7 @@ const App = () => {
             user && user.username
               ? <Tasks openCreateNewTaskModal={openCreateNewTaskModal}
                 tasks={sortedtasks}
+                editTodo={(todo: TaskType) => setCurrentToDo(todo)}
                 changeTaskStatus={changeTaskStatus} />
               : <ForUnloggedUsers />
 

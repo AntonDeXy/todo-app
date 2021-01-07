@@ -14,21 +14,30 @@ export const getSortedTasks = (tasks: TaskType[]) => {
 
   const finalData = [
     {
-      day: 'past',
+      day: 'overdue',
+      isColapsed: false,
       tasks: pastTasks.tasks
     },
     {
       day: 'today',
+      isColapsed: false,
       tasks: todayTasks.tasks
     },
     {
       day: 'tomorrow',
+      isColapsed: false,
       tasks: tomorrowTasks.tasks
     },
     {
       day: 'soon',
+      isColapsed: false,
       tasks: tomorrowTasks.remainedTasks
     },
+    {
+      day: 'past completed',
+      isColapsed: true,
+      tasks: pastTasks.completed
+    }
   ]
 
   return finalData
@@ -37,6 +46,7 @@ export const getSortedTasks = (tasks: TaskType[]) => {
 
 const getPastTasks = (tasks: TaskType[]) => {
   const remainedTasks: TaskType[] = []
+  const pastCompleted:TaskType[] = []
   const filteredTasks = tasks.filter((task) => {
     const dateForSortBy = new Date()
     const isYearPast = task.date.getFullYear() < dateForSortBy.getFullYear()
@@ -48,6 +58,8 @@ const getPastTasks = (tasks: TaskType[]) => {
     if (sort) {
       if (!task.isCompleted) {
         return task
+      } else {
+        pastCompleted.push(task)
       }
     } else {
       remainedTasks.push(task)
@@ -55,7 +67,7 @@ const getPastTasks = (tasks: TaskType[]) => {
     return false
   })
 
-  return { tasks: filteredTasks, remainedTasks }
+  return { completed: pastCompleted, tasks: filteredTasks, remainedTasks }
 }
 
 const getTodayTasks = (tasks: TaskType[]) => {
@@ -73,6 +85,7 @@ const getTodayTasks = (tasks: TaskType[]) => {
     } else {
       remainedTasks.push(task)
     }
+    return ''
   })
 
   return { tasks: filteredTasks, remainedTasks }
@@ -80,13 +93,16 @@ const getTodayTasks = (tasks: TaskType[]) => {
 
 const getTomorrowTasks = (tasks: TaskType[]) => {
   const remainedTasks: TaskType[] = []
-  const tommorowDate = new Date().getDate() + 1
+
+  const tommorowDate = new Date();
+  tommorowDate.setDate(new Date().getDate()+1);
+
 
   const filteredTasks = tasks.filter((task) => {
     const sort = (
-      task.date.getDate() === new Date(tommorowDate).getDate()
-      && task.date.getMonth() === new Date(tommorowDate).getMonth()
-      && task.date.getFullYear() === new Date(tommorowDate).getFullYear()
+      task.date.getDate() === tommorowDate.getDate()
+      && task.date.getMonth() === tommorowDate.getMonth()
+      && task.date.getFullYear() === tommorowDate.getFullYear()
     )
 
     if (sort) {
