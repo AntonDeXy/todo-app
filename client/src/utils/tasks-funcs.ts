@@ -2,11 +2,11 @@ import { TaskType } from "../types"
 
 export const getSortedTasks = (tasks: TaskType[]) => {
   const sortedByDateTasks = [...tasks]
-  .map(todo => ({
-    ...todo,
-    date: new Date(todo.date)
-  }))
-  .sort((a, b) => a.date.getTime() - b.date.getTime())
+    .map(todo => ({
+      ...todo,
+      date: new Date(todo.date)
+    }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime())
 
   const pastTasks = getPastTasks(sortedByDateTasks)
   const todayTasks = getTodayTasks(pastTasks.remainedTasks)
@@ -40,13 +40,15 @@ export const getSortedTasks = (tasks: TaskType[]) => {
     }
   ]
 
+  finalData.forEach(item => item.tasks.sort((a, b) => +a.isCompleted - +b.isCompleted))
+
   return finalData
 }
 
 
 const getPastTasks = (tasks: TaskType[]) => {
   const remainedTasks: TaskType[] = []
-  const pastCompleted:TaskType[] = []
+  const pastCompleted: TaskType[] = []
   const filteredTasks = tasks.filter((task) => {
     const dateForSortBy = new Date()
     const isYearPast = task.date.getFullYear() < dateForSortBy.getFullYear()
@@ -95,7 +97,7 @@ const getTomorrowTasks = (tasks: TaskType[]) => {
   const remainedTasks: TaskType[] = []
 
   const tommorowDate = new Date();
-  tommorowDate.setDate(new Date().getDate()+1);
+  tommorowDate.setDate(new Date().getDate() + 1);
 
 
   const filteredTasks = tasks.filter((task) => {

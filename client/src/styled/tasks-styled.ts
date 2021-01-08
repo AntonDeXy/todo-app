@@ -2,9 +2,12 @@ import styled from 'styled-components'
 
 export const TasksHeaderStyled = styled.div`
   display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  color: black;
+  .animation-wrapper {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    color: black;
+  }
   .left-block {
     display: grid;
     grid-template-columns: auto;
@@ -74,12 +77,17 @@ export const TaskGroupStyled = styled.div`
 `
 
 export const TaskStyled = styled.div<{isCompleted: boolean}>`
+ display: grid;
+ width: 100%;
+ .animation-wrapper {
   display: grid;
   grid-template-columns: auto 1fr 3em;
   border: 1px solid ${props => props.isCompleted ? '#cacaca' : 'gray'};
   border-radius: 10px;
   align-items: center;
   color: ${props => props.isCompleted ? '#cacaca' : 'black'};
+  
+  }
   .content {
     align-content: center;
     height: calc(100% - 10px);

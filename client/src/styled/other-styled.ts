@@ -1,6 +1,8 @@
 import styled from 'styled-components'
 
 export const ForUnloggedUsersSt = styled.div`
+  display: grid;
+  gap: 20px;
   text-align: center;
   span {
     font-size: 1.5em;
@@ -40,10 +42,13 @@ export const AuthPanelSt = styled.form`
 
 export const HeaderSt = styled.header`
   display: grid;
-  grid-auto-flow: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
+  .animation-wrapper {
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+  }
   h3 {
     margin: 0;
   }
@@ -56,6 +61,8 @@ export const ModalSt = styled.div`
   justify-self: center;
   gap: 10px;
   align-content: baseline;
+  align-self: center;
+  justify-self: center;
   .modal-header {
     display: grid;
     grid-auto-flow: column;
