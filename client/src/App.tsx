@@ -27,6 +27,7 @@ export const spinnerStyles = css`
 
 const App = () => {
   const alert = useAlert()
+  const [isAuthLoading, setAuthLoading] = useState(false)
   const [user, setUser] = useState<{ username?: string }>({})
   const [authErr, setAuthErr] = useState<string>('')
   const [tasks, setTasks] = useState<TaskType[]>([])
@@ -78,10 +79,12 @@ const App = () => {
   }
 
   const checkIfRefreshTokenExists = async () => {
+    setAuthLoading(true)
     const res = await api.getNewAccessToken()
     if (res.success) {
       setUser(res.user)
     }
+    setAuthLoading(false)
   }
 
   const changeTaskStatus = async (todoId: string, status: boolean) => {
@@ -147,7 +150,7 @@ const App = () => {
                 tasks={sortedtasks}
                 editTodo={(todo: TaskType) => setCurrentToDo(todo)}
                 changeTaskStatus={changeTaskStatus} />
-              : <ForUnloggedUsers />
+              : <ForUnloggedUsers isLoading={isAuthLoading} />
 
           }
         </Route>
