@@ -67,8 +67,15 @@ export const ModalSt = styled.div`
     display: grid;
     grid-auto-flow: column;
     padding: 5px;
+    font-size: 1.5em;
+    font-weight: 600;
     .close-modal {
       justify-self: right;
+      fill: #cf0000;
+      transition: all .3s;
+      & :hover {
+        fill: red;
+      }
     }
   }
   .load-img-label {
@@ -79,6 +86,7 @@ export const ModalSt = styled.div`
   .image-preview {
     max-height: 10em;
     max-width: 100%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
   }
   form {
     display: grid;

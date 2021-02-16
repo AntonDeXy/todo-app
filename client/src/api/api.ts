@@ -1,7 +1,8 @@
 import axios from "axios"
+import { config } from "../config"
 import { TaskType } from "../types"
 
-const baseUrl = process.env.REACT_APP_BASE_API_URL
+const baseUrl = config.base_api_url
 
 const saveAccessTokenToLS = (accessToken: string) => {
   localStorage.setItem('accessToken', accessToken)

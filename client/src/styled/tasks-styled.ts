@@ -99,6 +99,7 @@ export const TaskStyled = styled.div<{isCompleted: boolean}>`
     img {
       height: 10em;
       max-width: 100%;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
       filter: ${props => props.isCompleted ? 'opacity(0.7)' : 'opacity(1)'};
     }
   }

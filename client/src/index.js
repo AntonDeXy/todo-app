@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals'
 import './index.css'
 import { transitions, positions, Provider as AlertProvider } from 'react-alert'
 import AlertTemplate from 'react-alert-template-basic'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { HashRouter as Router } from 'react-router-dom'
 
 const alertOptions = {
   position: positions.BOTTOM_CENTER,
