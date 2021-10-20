@@ -14,8 +14,7 @@ const authenticateToken = authController.authenticateToken
 
 const todosController = require('./controllers/todos-controller')
 
-const dbName = 'test'
-const MONGO_URI = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.smobz.mongodb.net/${dbName}?retryWrites=true&w=majority`
+const MONGO_URI = process.env.MONGODB_URI
 
 app.use(express.json({limit: '50mb'}))
 app.use(morgan('tiny'))
